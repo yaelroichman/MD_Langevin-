@@ -15,5 +15,7 @@ classdef simConfig < handle
         WCAEpsilon % The epsilon parameter for WCA repulsion
         useHydro % Determines whether to apply hydrodynamic interactions between the particles
         displayLive % A boolean to determine whether to show the particles live on screen during the simulation
+        saveFoldername % The name of the file to save the data into
+        savePeriod % The amount of steps between writes to the disk
     end
 end

@@ -1,4 +1,4 @@
-function particlePositions = infoChamber(N,Dt,sampleRate,R,T,eta, lx, ly, numOfParticles, wallShrink, displayLive)
+function particlePositions = infoChamber(N,Dt,sampleRate,R,T,eta, lx, ly, numOfParticles, wallShrink,saveFoldername, displayLive)
     %% Setting the configuration for the simulation
     cfg = simConfig;
     cfg.N = N;
@@ -15,6 +15,8 @@ function particlePositions = infoChamber(N,Dt,sampleRate,R,T,eta, lx, ly, numOfP
     cfg.WCAEpsilon = 0.2*1.38e-23*cfg.T; % 0.2 kBT seems to work well
     cfg.useHydro = true;
     cfg.displayLive = displayLive;
+    cfg.saveFoldername = saveFoldername;
+    cfg.savePeriod = 1e5;
 
     %% Creating the additional info object
     wallData = additionalData;
@@ -32,7 +34,7 @@ function particlePositions = infoChamber(N,Dt,sampleRate,R,T,eta, lx, ly, numOfP
     initPositions(2,:) = particlesY;
     cfg.initPositions = initPositions;
     %% Running the simulation
-    particlePositions = MDSim(cfg, @computeForces, @checkIfMoveWall, @moveWall, wallData);
+    particlePositions = MDSim(cfg, @computeForces, @checkIfMoveWall, @moveWall, @printCurrStep, wallData);
     %% Showing the results
     wallData.wallMoveSteps = wallData.wallMoveSteps(wallData.wallMoveSteps ~= 0);
     wallData.newWallPositions = wallData.newWallPositions(wallData.newWallPositions ~= 0);
@@ -47,8 +49,8 @@ function particlePositions = infoChamber(N,Dt,sampleRate,R,T,eta, lx, ly, numOfP
     plot([cfg.wallPositionsX(1),cfg.wallPositionsX(2)],[cfg.wallPositionsY(1),cfg.wallPositionsY(1)],'-');
     plot([cfg.wallPositionsX(1),cfg.wallPositionsX(2)],[cfg.wallPositionsY(2),cfg.wallPositionsY(2)],'-');
     for i=1:cfg.numOfParticles
-        currParticleTrackX = squeeze(particlePositions(1,i,:));
-        currParticleTrackY = squeeze(particlePositions(2,i,:));
+        currParticleTrackX = squeeze(particlePositions(:,i,1));
+        currParticleTrackY = squeeze(particlePositions(:,i,2));
         plot(currParticleTrackX, currParticleTrackY, '.', 'Color', ColorSet(i,:));
     end
 
@@ -57,7 +59,7 @@ function particlePositions = infoChamber(N,Dt,sampleRate,R,T,eta, lx, ly, numOfP
     title('tracks')
 
     %% Saving the diffusion as a movie
-    numOfFrames = size(particlePositions,3);
+    numOfFrames = size(particlePositions,1);
     for i = 1:numOfFrames
 
         figure(1)  
@@ -66,8 +68,8 @@ function particlePositions = infoChamber(N,Dt,sampleRate,R,T,eta, lx, ly, numOfP
         plot([wallData.newWallPositions(movedInd),wallData.newWallPositions(movedInd)],[cfg.wallPositionsY(1),cfg.wallPositionsY(2)],'-');
         plot([cfg.wallPositionsX(1),wallData.newWallPositions(movedInd)],[cfg.wallPositionsY(1),cfg.wallPositionsY(1)],'-');
         plot([cfg.wallPositionsX(1),wallData.newWallPositions(movedInd)],[cfg.wallPositionsY(2),cfg.wallPositionsY(2)],'-');
-        viscircles([particlePositions(1,:,i)',...
-                    particlePositions(2,:,i)'],...
+        viscircles([particlePositions(i,:,1)',...
+                    particlePositions(i,:,2)'],...
             ones(numOfParticles,1).*cfg.R(1));
         hold off
           F(i) = getframe(gcf) ;
@@ -77,8 +79,8 @@ function particlePositions = infoChamber(N,Dt,sampleRate,R,T,eta, lx, ly, numOfP
         end
     end
     % create the video writer with 1 fps
-    writerObj = VideoWriter('particlesInChamber shrunk 25% 3-29-2020.avi');
-    writerObj.FrameRate = 20;
+    writerObj = VideoWriter(strcat(cfg.saveFoldername, '/movie.avi'));
+    writerObj.FrameRate = sampleRate;
     % set the seconds per image
     % open the video writer
     open(writerObj);
