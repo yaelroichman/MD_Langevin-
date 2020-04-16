@@ -25,7 +25,7 @@ else
     end
 end
 %% Saving the configuration
-save(strcat(cfg.saveFoldername, '/cfg.m'), 'cfg');
+save(strcat(cfg.saveFoldername, '/cfg.mat'), 'cfg');
 %% Setting up the run variables
 currStepData = simStepData;
 currStepData.particlePositions = (squeeze(particlePositions(1,:,:)));
@@ -39,9 +39,9 @@ currStepData.wallPositionsY = wallPositionsY;
     pause(0.01);
 %% Checking whether to run hydrosynamic interactions
 if ~cfg.useHydro
-    Dx = ones(1, numOfParticles).*D;
+    Dx = ones(cfg.numOfParticles,1).*D;
     Dy = Dx;
-    Ax = ones(1, numOfParticles).*sqrt(2*D);
+    Ax = ones(cfg.numOfParticles,1).*sqrt(2*D);
     Ay = Ax;
 end
 %% Running the simulation
@@ -62,7 +62,8 @@ for i = 2:1:cfg.N
         sampleInd = sampleInd + 1;
     end
     %% Saving the steps according to the save period parameter
-    if mod(i, cfg.savePeriod) == 0
+    if mod(i, cfg.savePeriod) == 0 || i == cfg.N
+        %% Saving the latest particle positions in .csv files
         dlmwrite(strcat(cfg.saveFoldername, '/pos_x.csv'),...
                     particlePositions(1:sampleInd-1,:,1),...
                     '-append');
@@ -70,10 +71,11 @@ for i = 2:1:cfg.N
                     particlePositions(1:sampleInd-1,:,2),...
                     '-append');
         particlePositions(1:sampleInd-1,:,:) = 0;
-        if exist(strcat(cfg.saveFoldername, '/data.m'), 'file')
-            delete(strcat(cfg.saveFoldername, '/data.m'));
+        %% Saving the additional tracked data in a .mat file.
+        if exist(strcat(cfg.saveFoldername, '/data.mat'), 'file')
+            delete(strcat(cfg.saveFoldername, '/data.mat'));
         end
-        save(strcat(cfg.saveFoldername, '/data.m'), 'addedData');
+        save(strcat(cfg.saveFoldername, '/data.mat'), 'addedData');
         sampleInd = 1;
     end
     %% Forces computation

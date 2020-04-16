@@ -34,7 +34,12 @@ function particlePositions = infoChamber(N,Dt,sampleRate,R,T,eta, lx, ly, numOfP
     initPositions(2,:) = particlesY;
     cfg.initPositions = initPositions;
     %% Running the simulation
-    particlePositions = MDSim(cfg, @computeForces, @checkIfMoveWall, @moveWall, @printCurrStep, wallData);
+    particlePositions = MDSim(cfg, @computeForces, @(x,y,z) false, @moveWall, @printCurrStep, wallData);
+    %% Checking the mean densities
+    pixelsPerLength = 10/1e-6
+    densityHeatMap(particlePositions, cfg.R,...
+                   cfg.wallPositionsX, cfg.wallPositionsY,...
+                   pixelsPerLength, true, true, cfg.saveFoldername);
     %% Showing the results
     wallData.wallMoveSteps = wallData.wallMoveSteps(wallData.wallMoveSteps ~= 0);
     wallData.newWallPositions = wallData.newWallPositions(wallData.newWallPositions ~= 0);
@@ -72,23 +77,24 @@ function particlePositions = infoChamber(N,Dt,sampleRate,R,T,eta, lx, ly, numOfP
                     particlePositions(i,:,2)'],...
             ones(numOfParticles,1).*cfg.R(1));
         hold off
-          F(i) = getframe(gcf) ;
+          F(i) = getframe(gcf);
           drawnow
         if movedInd < length(sampledWallMoves) && mod(i,sampledWallMoves(movedInd)) == 0
             movedInd = movedInd + 1;
         end
     end
-    % create the video writer with 1 fps
-    writerObj = VideoWriter(strcat(cfg.saveFoldername, '/movie.avi'));
-    writerObj.FrameRate = sampleRate;
-    % set the seconds per image
-    % open the video writer
-    open(writerObj);
-    % write the frames to the video
-    for i=1:length(F)
-        % convert the image to a frame
-        frame = F(i) ;    
-        writeVideo(writerObj, frame);
-    end
-    % close the writer object
-    close(writerObj);
+    saveMovie(F, 1/cfg.sampleRate, strcat(cfg.saveFoldername, '/movie.avi'))
+%     % create the video writer with 1 fps
+%     writerObj = VideoWriter(strcat(cfg.saveFoldername, '/movie.avi'));
+%     writerObj.FrameRate = sampleRate;
+%     % set the seconds per image
+%     % open the video writer
+%     open(writerObj);
+%     % write the frames to the video
+%     for i=1:length(F)
+%         % convert the image to a frame
+%         frame = F(i) ;    
+%         writeVideo(writerObj, frame);
+%     end
+%     % close the writer object
+%     close(writerObj);
