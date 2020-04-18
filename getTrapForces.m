@@ -17,16 +17,9 @@ fy = zeros(numOfParticles,1);
 
 for currParticle = 1:numOfParticles
     checkedParticlePosition = particlePositions(currParticle,:);
-    for currTrap = 1:numOfTraps
-        checkedTrapPosition = trapPositions(currTrap,:);
-        checkedTrapDepth = A(currTrap,:);
-        checkedTrapSize = s(currTrap,:);
-        
-        fx(currParticle) = fx(currParticle) + getSingleTrapForce(checkedParticlePosition(1),...
-            checkedTrapPosition(1), checkedTrapDepth(1), checkedTrapSize(1));
-        
-        fy(currParticle) = fy(currParticle) + getSingleTrapForce(checkedParticlePosition(2),...
-            checkedTrapPosition(2), checkedTrapDepth(2), checkedTrapSize(2));
-        
-    end
+    
+    total_force = getSingleTrapForce(checkedParticlePosition, trapPositions, A, s);
+    
+    fx(currParticle) = total_force(1);
+    fy(currParticle) = total_force(2);
 end

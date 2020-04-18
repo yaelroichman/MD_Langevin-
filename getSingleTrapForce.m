@@ -1,3 +1,4 @@
-function f = getSingleTrapForce(particlePosition, trapPosition, A, s)
-%Calculate force from an optical trap on a particle
-f = (A/s^2) * (particlePosition-trapPosition) * exp(-0.5*(particlePosition-trapPosition)/s)^2;
+function total_force = getSingleTrapForce(particlePosition, trapPositions, A, s)
+%Calculate force from all optical traps on a particle
+f = (A./s.^2) .* (particlePosition-trapPositions) .* exp((-0.5*(particlePosition-trapPositions)./s).^2);
+total_force = sum(f,1);
