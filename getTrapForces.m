@@ -18,7 +18,7 @@ fy = zeros(numOfParticles,1);
 for currParticle = 1:numOfParticles
     checkedParticlePosition = particlePositions(currParticle,:);
     
-    total_force = getSingleTrapForce(checkedParticlePosition, trapPositions, A, s);
+    total_force = getTrapForcesForSingleParticle(checkedParticlePosition, trapPositions, A, s);
     
     fx(currParticle) = total_force(1);
     fy(currParticle) = total_force(2);
