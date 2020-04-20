@@ -37,7 +37,7 @@ currStepData.wallPositionsY = wallPositionsY;
     ylabel('y [m]');
     title('Initial placement');
     pause(0.01);
-%% Checking whether to run hydrosynamic interactions
+%% Checking whether to run hydrodynamic interactions
 if ~cfg.useHydro
     Dx = ones(1, numOfParticles).*D;
     Dy = Dx;

@@ -1,22 +1,24 @@
-function particlePositions = infoChamber(N,Dt,sampleRate,R,T,eta, lx, ly, numOfParticles, wallShrink,saveFoldername, displayLive)
+function particlePositions = infoChamber(N,Dt,sampleRate,R,T,eta, lx, ly, xlimit,ylimit, numOfParticles, wallShrink,saveFoldername, displayLive)
     %% Setting the configuration for the simulation
     cfg = simConfig;
+    cfg.xlimit=xlimit;
+    cfg.ylimit=ylimit;
     cfg.N = N;
     cfg.Dt = Dt;
     cfg.sampleRate = sampleRate;
     cfg.numOfParticles = numOfParticles;
     cfg.eta = eta;
     cfg.R = ones(1,numOfParticles).*R;
-    cfg.T = 300;
+    cfg.T = T;
     cfg.wallPositionsX = [-lx/2, lx/2 - wallShrink];
     cfg.wallPositionsY = [-ly/2, ly/2];
-    cfg.useWalls = true;
+    cfg.useWalls = false;
     cfg.useParticleRepulsion = true;
-    cfg.WCAEpsilon = 0.2*1.38e-23*cfg.T; % 0.2 kBT seems to work well
+    cfg.WCAEpsilon = 0.2*physconst('boltzmann')*cfg.T; % 0.2 kBT seems to work well
     cfg.useHydro = true;
     cfg.displayLive = displayLive;
     cfg.saveFoldername = saveFoldername;
-    cfg.savePeriod = 1e5;
+    cfg.savePeriod = 1e5; %save to disk
 
     %% Creating the additional info object
     wallData = additionalData;
