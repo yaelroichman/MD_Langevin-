@@ -5,10 +5,7 @@ R = cfg.R(1); % Currently works only with one constant R
 gamma = 6*pi*R*cfg.eta; % friction coefficient
 D = kB*cfg.T/gamma; % diffusion coefficient
 d = 2; % The dimension of the problem. Currently ONLY WORKS FOR 2d!!
-wallPositionsX = cfg.wallPositionsX;
-wallPositionsY = cfg.wallPositionsY;
-sampleRate = cfg.sampleRate; %fps
-samplePeriod = round(sampleRate / cfg.Dt);
+samplePeriod = round(cfg.sampleRate / cfg.Dt);
 particlePositions = zeros(cfg.savePeriod/samplePeriod,cfg.numOfParticles, d);
 particlePositions(1,:,:) = cfg.initPositions';
 %% Checking if the save directory already exists
@@ -25,23 +22,33 @@ else
     end
 end
 %% Saving the configuration
-save(strcat(cfg.saveFoldername, '/cfg.m'), 'cfg');
+save(strcat(cfg.saveFoldername, '/cfg.mat'), 'cfg');
 %% Setting up the run variables
 currStepData = simStepData;
 currStepData.particlePositions = (squeeze(particlePositions(1,:,:)));
-currStepData.wallPositionsX = wallPositionsX;
-currStepData.wallPositionsY = wallPositionsY;
+if cfg.useWalls
+    currStepData.wallPositionsX = cfg.wallPositionsX;
+    currStepData.wallPositionsY = cfg.wallPositionsY;
+end
+
+if cfg.useTraps
+    currStepData.A = cfg.A;
+    currStepData.s = cfg.s;
+    trapPositions(1,:,:) = cfg.initTrapPositions';
+    currStepData.trapPositions = (squeeze(trapPositions(1,:,:)));
+end
+
 %% Plotting the initial placements
-    printFunc(cfg, currStepData, addedData);
-    xlabel('x [m]');
-    ylabel('y [m]');
-    title('Initial placement');
-    pause(0.01);
-%% Checking whether to run hydrodynamic interactions
+printFunc(cfg, currStepData, addedData);
+xlabel('x [m]');
+ylabel('y [m]');
+title('Initial placement');
+pause(0.01);
+%% Checking whether to run hydrosynamic interactions
 if ~cfg.useHydro
-    Dx = ones(1, numOfParticles).*D;
+    Dx = ones(cfg.numOfParticles,1).*D;
     Dy = Dx;
-    Ax = ones(1, numOfParticles).*sqrt(2*D);
+    Ax = ones(cfg.numOfParticles,1).*sqrt(2*D);
     Ay = Ax;
 end
 %% Running the simulation
@@ -57,23 +64,25 @@ for i = 2:1:cfg.N
         if cfg.displayLive
             printFunc(cfg, currStepData, addedData);
         end
-
+        
         particlePositions(sampleInd,:,:) = currStepData.particlePositions;
         sampleInd = sampleInd + 1;
     end
     %% Saving the steps according to the save period parameter
-    if mod(i, cfg.savePeriod) == 0
+    if mod(i, cfg.savePeriod) == 0 || i == cfg.N
+        %% Saving the latest particle positions in .csv files
         dlmwrite(strcat(cfg.saveFoldername, '/pos_x.csv'),...
-                    particlePositions(1:sampleInd-1,:,1),...
-                    '-append');
+            particlePositions(1:sampleInd-1,:,1),...
+            '-append');
         dlmwrite(strcat(cfg.saveFoldername, '/pos_y.csv'),...
-                    particlePositions(1:sampleInd-1,:,2),...
-                    '-append');
+            particlePositions(1:sampleInd-1,:,2),...
+            '-append');
         particlePositions(1:sampleInd-1,:,:) = 0;
-        if exist(strcat(cfg.saveFoldername, '/data.m'), 'file')
-            delete(strcat(cfg.saveFoldername, '/data.m'));
+        %% Saving the additional tracked data in a .mat file.
+        if exist(strcat(cfg.saveFoldername, '/data.mat'), 'file')
+            delete(strcat(cfg.saveFoldername, '/data.mat'));
         end
-        save(strcat(cfg.saveFoldername, '/data.m'), 'addedData');
+        save(strcat(cfg.saveFoldername, '/data.mat'), 'addedData');
         sampleInd = 1;
     end
     %% Forces computation
@@ -92,11 +101,11 @@ for i = 2:1:cfg.N
     end
     %% Running the step
     currStepData.particlePositions(:,1) = currStepData.particlePositions(:,1) +...
-                    Ax.*sqrt(cfg.Dt).*randn(cfg.numOfParticles,1) +...
-                    (Dx./(kB.*cfg.T)).*fx.*cfg.Dt;
+        Ax.*sqrt(cfg.Dt).*randn(cfg.numOfParticles,1) +...
+        (Dx./(kB.*cfg.T)).*fx.*cfg.Dt;
     currStepData.particlePositions(:,2) = currStepData.particlePositions(:,2) +...
-                    Ay.*sqrt(cfg.Dt).*randn(cfg.numOfParticles,1) +...
-                    (Dy./(kB.*cfg.T)).*fy.*cfg.Dt;
+        Ay.*sqrt(cfg.Dt).*randn(cfg.numOfParticles,1) +...
+        (Dy./(kB.*cfg.T)).*fy.*cfg.Dt;
     %% Checking whether to apply a feedback to the system, and applying it if necessary
     if feedbackCheckFunc(cfg, currStepData, addedData)
         feedbackFunc(cfg, currStepData, addedData);
