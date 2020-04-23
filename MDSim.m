@@ -67,10 +67,7 @@ for i = 2:1:cfg.N
     end
     %% Saving the steps according to the save period parameter
     if mod(i, cfg.savePeriod) == 0 || i == cfg.N
-<<<<<<< HEAD
-=======
         %% Saving the latest particle positions in .csv files
->>>>>>> upstream/master
         dlmwrite(strcat(cfg.saveFoldername, '/pos_x.csv'),...
             particlePositions(1:sampleInd-1,:,1),...
             '-append');
@@ -79,20 +76,13 @@ for i = 2:1:cfg.N
             '-append');
         
         particlePositions(1:sampleInd-1,:,:) = 0;
-<<<<<<< HEAD
-        
-        if exist(strcat(cfg.saveFoldername, '/data.m'), 'file')
-            delete(strcat(cfg.saveFoldername, '/data.m'));
-        end
-        save(strcat(cfg.saveFoldername, '/data.m'), 'addedData');
-        
-=======
+
         %% Saving the additional tracked data in a .mat file.
         if exist(strcat(cfg.saveFoldername, '/data.mat'), 'file')
             delete(strcat(cfg.saveFoldername, '/data.mat'));
         end
         save(strcat(cfg.saveFoldername, '/data.mat'), 'addedData');
->>>>>>> upstream/master
+        
         sampleInd = 1;
         100*(i/cfg.N)
     end
