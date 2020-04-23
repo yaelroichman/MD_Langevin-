@@ -44,6 +44,7 @@ from `initPos = [0 0 ; 1 1 ; 2 2];`
      1     1
      2     2`
 to `partPos(1,:,:) = initPos';`
+
 *ans(:,:,1) =*
 
      0     1     2
@@ -152,7 +153,6 @@ Saves the current `particlePositions`. If `cfg.displayLive` is True will go to t
 ##### %% Saving the steps according to the save period parameter
 When the simulation reaches the end of a `savePeriod` or the end of the defined number of steps (`cfg.N`) it appends the positions to the relevant file.
 Resets the `ParticlePositions` matrix, and the `SampleInd`.
-## Check with gilad
 outputs completion precentage.
 ```matlab
     if mod(i, cfg.savePeriod) == 0 || i == cfg.N
