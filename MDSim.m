@@ -1,13 +1,14 @@
 function particlePositions = MDSim(cfg, forcesFunc, feedbackCheckFunc, feedbackFunc, printFunc, addedData)
+%% Basic definitions
 close all
-kB = 1.38e-23; % Boltzmann constant [J/K]
+kB = physconst('Boltzmann'); % Boltzmann constant [J/K]
 R = cfg.R(1); % Currently works only with one constant R
 gamma = 6*pi*R*cfg.eta; % friction coefficient
 D = kB*cfg.T/gamma; % diffusion coefficient
 d = 2; % The dimension of the problem. Currently ONLY WORKS FOR 2d!!
-samplePeriod = round(cfg.sampleRate / cfg.Dt);
-particlePositions = zeros(cfg.savePeriod/samplePeriod,cfg.numOfParticles, d);
-particlePositions(1,:,:) = cfg.initPositions;
+samplePeriod = round(1 / (cfg.Dt*cfg.sampleRate)); % Defines the samplePeriod at which we will sample the simulation. 
+particlePositions = zeros(1+ceil(cfg.savePeriod/samplePeriod),cfg.numOfParticles, d); % Preallocate space
+particlePositions(1,:,:) = cfg.initPositions'; % sets the first step as defined in configuration
 %% Checking if the save directory already exists
 if ~exist(cfg.saveFoldername, 'dir')
     mkdir(cfg.saveFoldername);
@@ -44,7 +45,7 @@ xlabel('x [m]');
 ylabel('y [m]');
 title('Initial placement');
 pause(0.01);
-%% Checking whether to run hydrosynamic interactions
+%% Checking whether to run hydrodynamic interactions
 if ~cfg.useHydro
     Dx = ones(cfg.numOfParticles,1).*D;
     Dy = Dx;
@@ -53,13 +54,9 @@ if ~cfg.useHydro
 end
 %% Running the simulation
 sampleInd = 2;
-printPeriod = 1e5;
 for i = 2:1:cfg.N
     currStepData.stepNum = i;
     %% Printing data
-    if mod(i, printPeriod) == 0
-        i
-    end
     if mod(i, samplePeriod) == 0
         if cfg.displayLive
             printFunc(cfg, currStepData, addedData);
@@ -77,13 +74,17 @@ for i = 2:1:cfg.N
         dlmwrite(strcat(cfg.saveFoldername, '/pos_y.csv'),...
             particlePositions(1:sampleInd-1,:,2),...
             '-append');
+        
         particlePositions(1:sampleInd-1,:,:) = 0;
+
         %% Saving the additional tracked data in a .mat file.
         if exist(strcat(cfg.saveFoldername, '/data.mat'), 'file')
             delete(strcat(cfg.saveFoldername, '/data.mat'));
         end
         save(strcat(cfg.saveFoldername, '/data.mat'), 'addedData');
+        
         sampleInd = 1;
+        100*(i/cfg.N)
     end
     %% Forces computation
     [fx, fy] = ...
@@ -92,8 +93,8 @@ for i = 2:1:cfg.N
     if cfg.useHydro
         DMat = rotnePrager(currStepData.particlePositions,R, D);
         rootMat = chol(DMat,'lower');
-        DVec = DMat*ones(cfg.numOfParticles.*d,1);
-        AVec = rootMat*ones(cfg.numOfParticles.*d,1);
+        DVec = DMat*ones(cfg.numOfParticles*d,1);
+        AVec = rootMat*ones(cfg.numOfParticles*d,1);
         Dx = DVec(1:2:end);
         Dy = DVec(2:2:end);
         Ax = AVec(1:2:end);
