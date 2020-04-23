@@ -6,15 +6,9 @@ R = cfg.R(1); % Currently works only with one constant R
 gamma = 6*pi*R*cfg.eta; % friction coefficient
 D = kB*cfg.T/gamma; % diffusion coefficient
 d = 2; % The dimension of the problem. Currently ONLY WORKS FOR 2d!!
-<<<<<<< HEAD
 samplePeriod = round(1 / (cfg.Dt*cfg.sampleRate)); % Defines the samplePeriod at which we will sample the simulation. 
 particlePositions = zeros(1+ceil(cfg.savePeriod/samplePeriod),cfg.numOfParticles, d); % Preallocate space
 particlePositions(1,:,:) = cfg.initPositions'; % sets the first step as defined in configuration
-=======
-samplePeriod = round(cfg.sampleRate / cfg.Dt);
-particlePositions = zeros(cfg.savePeriod/samplePeriod,cfg.numOfParticles, d);
-particlePositions(1,:,:) = cfg.initPositions;
->>>>>>> upstream/master
 %% Checking if the save directory already exists
 if ~exist(cfg.saveFoldername, 'dir')
     mkdir(cfg.saveFoldername);
