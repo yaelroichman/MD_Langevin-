@@ -21,14 +21,15 @@ function [meanDensitiy, densitySTDs] = densityHeatMap(particlePositions, radii, 
     numOfParticles = size(particlePositions, 2);
     
     % Creating a coarse-grained matrix of the tested area
-    nx = pixelsPerLength.*lx;
-    ny = pixelsPerLength.*ly;
+    nx = round(pixelsPerLength.*lx);
+    ny = round(pixelsPerLength.*ly);
     meanDensitiy = zeros(ny, nx);
     % Note that since these are images, we use the rows for the y axis and
     % the columns for the x axis, opposite from what the simulation uses.
     
     densitySTDs = zeros(numOfFrames, 1);
     radiiInMat = radii.*pixelsPerLength;
+    figure(3);
     for frameInd = 1:numOfFrames
         for particleInd = 1:numOfParticles
             currPosition = squeeze(particlePositions(frameInd,particleInd,:));
@@ -66,6 +67,8 @@ function [meanDensitiy, densitySTDs] = densityHeatMap(particlePositions, radii, 
         end
         pause(0.001);
     end
+    % Saving the final figure
+    saveas(gcf, strcat(saveFoldername,'/finalHeatMap.png'));
     % Saving the movie to the disk, if needed
     if movie
         saveMovie(F, 60, strcat(saveFoldername, '/heatMap.avi'));
@@ -74,8 +77,9 @@ function [meanDensitiy, densitySTDs] = densityHeatMap(particlePositions, radii, 
     save(strcat(saveFoldername, '/densitySTDs.mat'),'densitySTDs');
     % Presenting the plot of the standard deviation of the mean particle
     % density
-    figure
+    figure(4)
     plot(densitySTDs);
     xlabel('Number of steps');
     ylabel('Standard Deviation');
     title(strcat('Standard Deviation of the mean particle density', saveFoldername));
+    saveas(gcf, strcat(saveFoldername,'/STDs.png'));

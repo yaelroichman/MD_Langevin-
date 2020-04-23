@@ -7,7 +7,7 @@ D = kB*cfg.T/gamma; % diffusion coefficient
 d = 2; % The dimension of the problem. Currently ONLY WORKS FOR 2d!!
 samplePeriod = round(cfg.sampleRate / cfg.Dt);
 particlePositions = zeros(cfg.savePeriod/samplePeriod,cfg.numOfParticles, d);
-particlePositions(1,:,:) = cfg.initPositions';
+particlePositions(1,:,:) = cfg.initPositions;
 %% Checking if the save directory already exists
 if ~exist(cfg.saveFoldername, 'dir')
     mkdir(cfg.saveFoldername);
