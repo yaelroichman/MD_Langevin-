@@ -7,8 +7,8 @@ function printCurrStep(cfg, currStepData, addedData)
         plot([currStepData.wallPositionsX(1),currStepData.wallPositionsX(2)],[currStepData.wallPositionsY(1),currStepData.wallPositionsY(1)],'-');
         plot([currStepData.wallPositionsX(1),currStepData.wallPositionsX(2)],[currStepData.wallPositionsY(2),currStepData.wallPositionsY(2)],'-');
     end
-   xlim([-cfg.xlimit,cfg.xlimit])
-   ylim([-cfg.ylimit,cfg.ylimit])
+   xlim(cfg.xlimits)
+   ylim(cfg.ylimits)
     viscircles([currStepData.particlePositions(:,1),...
                 currStepData.particlePositions(:,2)],...
         ones(cfg.numOfParticles,1).*cfg.R(1));

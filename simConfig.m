@@ -1,7 +1,7 @@
 classdef simConfig < handle
     properties
-        xlimit %set borders in field of view- x axis
-        ylimit %set borders in field of view- y axis
+        xlimits %set borders in field of view- x axis
+        ylimits %set borders in field of view- y axis
         numOfParticles % The amount of particles to simulate
         R % A (row) vector of the radii of the particles
         initPositions % The initial positions of the particles (2xnumOfParticles matrix)
