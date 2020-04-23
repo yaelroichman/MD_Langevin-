@@ -10,7 +10,7 @@ wallPositionsY = cfg.wallPositionsY;
 sampleRate = cfg.sampleRate; %fps
 samplePeriod = round(sampleRate / cfg.Dt);
 particlePositions = zeros(cfg.savePeriod/samplePeriod,cfg.numOfParticles, d);
-particlePositions(1,:,:) = cfg.initPositions';
+particlePositions(1,:,:) = cfg.initPositions;
 %% Checking if the save directory already exists
 if ~exist(cfg.saveFoldername, 'dir')
     mkdir(cfg.saveFoldername);
