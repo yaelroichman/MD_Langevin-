@@ -6,9 +6,15 @@ R = cfg.R(1); % Currently works only with one constant R
 gamma = 6*pi*R*cfg.eta; % friction coefficient
 D = kB*cfg.T/gamma; % diffusion coefficient
 d = 2; % The dimension of the problem. Currently ONLY WORKS FOR 2d!!
+<<<<<<< HEAD
 samplePeriod = round(1 / (cfg.Dt*cfg.sampleRate)); % Defines the samplePeriod at which we will sample the simulation. 
 particlePositions = zeros(1+ceil(cfg.savePeriod/samplePeriod),cfg.numOfParticles, d); % Preallocate space
 particlePositions(1,:,:) = cfg.initPositions'; % sets the first step as defined in configuration
+=======
+samplePeriod = round(cfg.sampleRate / cfg.Dt);
+particlePositions = zeros(cfg.savePeriod/samplePeriod,cfg.numOfParticles, d);
+particlePositions(1,:,:) = cfg.initPositions;
+>>>>>>> upstream/master
 %% Checking if the save directory already exists
 if ~exist(cfg.saveFoldername, 'dir')
     mkdir(cfg.saveFoldername);
@@ -47,9 +53,7 @@ title('Initial placement');
 pause(0.01);
 %% Checking whether to run hydrodynamic interactions
 if ~cfg.useHydro
-    Dx = ones(1, numOfParticles).*D;
     Dy = Dx;
-    Ax = ones(1, numOfParticles).*sqrt(2*D);
     Ay = Ax;
 end
 %% Running the simulation
@@ -67,6 +71,10 @@ for i = 2:1:cfg.N
     end
     %% Saving the steps according to the save period parameter
     if mod(i, cfg.savePeriod) == 0 || i == cfg.N
+<<<<<<< HEAD
+=======
+        %% Saving the latest particle positions in .csv files
+>>>>>>> upstream/master
         dlmwrite(strcat(cfg.saveFoldername, '/pos_x.csv'),...
             particlePositions(1:sampleInd-1,:,1),...
             '-append');
@@ -75,12 +83,20 @@ for i = 2:1:cfg.N
             '-append');
         
         particlePositions(1:sampleInd-1,:,:) = 0;
+<<<<<<< HEAD
         
         if exist(strcat(cfg.saveFoldername, '/data.m'), 'file')
             delete(strcat(cfg.saveFoldername, '/data.m'));
         end
         save(strcat(cfg.saveFoldername, '/data.m'), 'addedData');
         
+=======
+        %% Saving the additional tracked data in a .mat file.
+        if exist(strcat(cfg.saveFoldername, '/data.mat'), 'file')
+            delete(strcat(cfg.saveFoldername, '/data.mat'));
+        end
+        save(strcat(cfg.saveFoldername, '/data.mat'), 'addedData');
+>>>>>>> upstream/master
         sampleInd = 1;
         100*(i/cfg.N)
     end
