@@ -29,7 +29,7 @@ else
     end
 end
 %% Saving the configuration
-save(strcat(cfg.saveFoldername, '/cfg.m'), 'cfg');
+save(strcat(cfg.saveFoldername, '/cfg.mat'), 'cfg');
 %% Setting up the run variables
 currStepData = simStepData;
 currStepData.particlePositions = (squeeze(particlePositions(1,:,:)));
@@ -53,7 +53,9 @@ title('Initial placement');
 pause(0.01);
 %% Checking whether to run hydrodynamic interactions
 if ~cfg.useHydro
+    Dx = ones(cfg.numOfParticles,1).*D;
     Dy = Dx;
+    Ax = ones(cfg.numOfParticles,1).*sqrt(2*D);
     Ay = Ax;
 end
 %% Running the simulation
