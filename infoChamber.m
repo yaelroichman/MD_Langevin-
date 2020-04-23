@@ -27,7 +27,7 @@ function particlePositions = infoChamber(N,Dt,sampleRate,R,T,eta, lx, ly, numOfP
     wallData.wallMoveSteps(1) = 0;
     wallData.wallMoveInd = 2;
     %% Randomizing particle starting positions
-    rng(0,'twister');
+    rng('shuffle');
     [particlesX, particlesY] = randomizePositions(cfg.wallPositionsX, cfg.wallPositionsY, numOfParticles, R);
     initPositions = zeros(2,numOfParticles);
     initPositions(1,:) = particlesX;

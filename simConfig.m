@@ -22,6 +22,7 @@ classdef simConfig < handle
         s % Trap size can be a scalar (if all traps are the same) or a (2xnumOfTrap matrix) 
         
         useHydro % Determines whether to apply hydrodynamic interactions between the particles
+        
         displayLive % A boolean to determine whether to show the particles live on screen during the simulation
         saveFoldername % The name of the file to save the data into
         savePeriod % The amount of steps between writes to the disk
