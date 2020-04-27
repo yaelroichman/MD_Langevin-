@@ -42,7 +42,7 @@ from `initPos = [0 0 ; 1 1 ; 2 2];`
 
      0     0
      1     1
-     2     2`
+     2     2
 to `partPos(1,:,:) = initPos';`
 
 *ans(:,:,1) =*
@@ -224,12 +224,30 @@ particlePositions(:,:,2) = particlePositionsY;
 particlePositions(:,:,1) = particlePositionsX;
 ```
 
+
 ---
 ## Function explanation
-cfg - input
-simStepdata - calls different sections between MDSim
-addedData - optional tank of data
+For uses check out the ["basic examples"](#basic-examples), and for customization you can check out ["how to personalize"](#how-to-personalize).
 
+### classes for easy access to variables
+Here we can define some variables using these classes, and have easy access to them in different areas of the simulation.
+
+#### simConfig
+Referenced as `cfg` throughout this document. Contains variables for the basic configurations of every simulation as well as important booleans, such as `useHydro` and `displayLive`. Divided into rough sections by the variables purpose in the simulation. 
+
+#### simStepdata
+During the run of the simulation we won't be redefining variables from simConfig. The variables from here will contain data the is needed in different areas of the MDSim while the simulation is running. 
+Most likely these variables will prove helpful when using self defined `feedbackFunc`, as they by default contain the current `particlePositions`, `stepNum`, and some other information that depends on the chosen booleans in `cfg`.
+
+#### additionalData
+Go wild.
+This is added to **every** function used in the MDSim, so you can draw out specific things we couldn't expect someone would ever need.
+>*I want to save the position of the leftmost trap, and the particle closest to it during the run?* 
+>*Don't work hard on adding it to other places, just use your* `feedbackFunc` *and add the variables you want to the* `additionalData`
+
+---
+
+### Important constantly present functions
 forcesFunc
 
 rotnePrager
@@ -241,11 +259,11 @@ rotnePrager
 
 ## Basic examples
 
-Please read [Examples.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for some basic usage examples
+Please read [Examples.md](http) for some basic usage examples
 
 ## How to personalize
 
-Please read [Personalization.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details about how to add new forces or other functions.
+Please read [Personalization.md](http) for details about how to add new forces or other functions.
 
 ## References
 
