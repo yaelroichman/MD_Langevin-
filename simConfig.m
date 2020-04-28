@@ -1,7 +1,6 @@
 classdef simConfig < handle
     properties
-        xlimits %set borders in field of view- x axis
-        ylimits %set borders in field of view- y axis
+        % Basic settings
         numOfParticles % The amount of particles to simulate
         R % A (row) vector of the radii of the particles
         initPositions % The initial positions of the particles (2xnumOfParticles matrix)
@@ -10,6 +9,18 @@ classdef simConfig < handle
         N % The number of steps to run the simulation for
         Dt % The length (sec) of a time step to use in the simulation
         sampleRate % The rate (1/sec) at which the particle positions are recorded
+        
+        % Display settings
+        displayLive % A boolean to determine whether to show the particles live on screen during the simulation
+        xlimits %set borders in field of view- x axis
+        ylimits %set borders in field of view- y axis
+        
+        % Save settings
+        saveFoldername % The name of the file to save the data into
+        savePeriod % The amount of steps between writes to the disk
+        
+        % Settings for forces
+        useHydro % Determines whether to apply hydrodynamic interactions between the particles
         
         useWalls % Boolean determining whether to apply walls to the simulation
         wallPositionsX % Spatial position of the wall on the x axis
@@ -21,12 +32,7 @@ classdef simConfig < handle
         useTraps % Boolean determining whether to use optical traps
         initTrapPositions % The initial positions of the particles (2xnumOfTrap matrix)
         A % Trap depth can be a scalar (if all traps are the same) or a (2xnumOfTrap matrix) 
-        s % Trap size can be a scalar (if all traps are the same) or a (2xnumOfTrap matrix) 
-        
-        useHydro % Determines whether to apply hydrodynamic interactions between the particles
-        
-        displayLive % A boolean to determine whether to show the particles live on screen during the simulation
-        saveFoldername % The name of the file to save the data into
-        savePeriod % The amount of steps between writes to the disk
+        s % Trap size can be a scalar (if all traps are the same) or a (2xnumOfTrap matrix)         
+
     end
 end

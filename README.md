@@ -42,8 +42,9 @@ from `initPos = [0 0 ; 1 1 ; 2 2];`
 
      0     0
      1     1
-     2     2`
+     2     2
 to `partPos(1,:,:) = initPos';`
+
 *ans(:,:,1) =*
 
      0     1     2
@@ -152,7 +153,6 @@ Saves the current `particlePositions`. If `cfg.displayLive` is True will go to t
 ##### %% Saving the steps according to the save period parameter
 When the simulation reaches the end of a `savePeriod` or the end of the defined number of steps (`cfg.N`) it appends the positions to the relevant file.
 Resets the `ParticlePositions` matrix, and the `SampleInd`.
-## Check with gilad
 outputs completion precentage.
 ```matlab
     if mod(i, cfg.savePeriod) == 0 || i == cfg.N
@@ -224,28 +224,118 @@ particlePositions(:,:,2) = particlePositionsY;
 particlePositions(:,:,1) = particlePositionsX;
 ```
 
+
 ---
 ## Function explanation
-cfg - input
-simStepdata - calls different sections between MDSim
-addedData - optional tank of data
+For uses check out the ["basic examples"](#basic-examples), and for customization you can check out ["how to personalize"](#how-to-personalize).
 
-forcesFunc
+### classes for easy access to variables
+Here we can define some variables using these classes, and have easy access to them in different areas of the simulation.
 
-rotnePrager
+#### simConfig
+Referenced as `cfg` throughout this document. Contains variables for the basic configurations of every simulation as well as important booleans, such as `useHydro` and `displayLive`. Divided into rough sections by the variables purpose in the simulation. 
 
- feedbackCheckFunc
- feedbackFunc
- printFunc
- 
+#### simStepdata
+During the run of the simulation we won't be redefining variables from simConfig. The variables from here will contain data the is needed in different areas of the MDSim while the simulation is running. 
+Most likely these variables will prove helpful when using self defined `feedbackFunc`, as they by default contain the current `particlePositions`, `stepNum`, and some other information that depends on the chosen booleans in `cfg`.
+
+#### additionalData
+Go wild.
+This is added (`addedData`) to **every** function used in the MDSim, so you can draw out specific things we couldn't expect someone would ever need.
+>*I want to save the position of the leftmost trap, and the particle closest to it during the run?* 
+>*Don't work hard on adding it to other places, just use your* `feedbackFunc` *and add the variables you want to the* `additionalData`
+
+---
+
+### Important constantly present functions
+Most likely you won't need to change these functions when using the simulation.
+#### forcesFunc 
+When we run `MDSim` there is a need to provide a `forcesFunc` which will be used to compute the forces on the particles at every simulation step. Most of the time you should use the function **`ComputeForces`** as it was constructed to fill the place of all relevant forces.
+
+ - **computeForces**  - `[fx, fy] = computeForces(cfg, currStepData, addedData)`
+
+*Input* - `simConfig`,`simStepdata`,`additionalData` - All our relevant variables.
+*Output* - Forces per axis on all particles (`[fx, fy]`) 
+*Inside* - for every force used (every relevant boolean set as true) will calculate the force using the relevant function.
+Sample - 
+```matlab
+if cfg.useTraps
+    [fxTraps, fyTraps] = getTrapForces(currStepData.particlePositions, currStepData.trapPositions, cfg.A, cfg.s);
+    fx = fx + fxTraps;
+    fy = fy + fyTraps;
+end
+```
+#### rotnePrager  - `DMat = rotnePrager(particlesMat,R, D)`
+
+Will run only if `cfg.useHydro` was set as true, this means we want to include hydrodynamic interactions between our particles [[1-3](#references)].
+
+*Input* - `particlesMat` - The current position of the particles, `R` - Particle radius, `D` - Diffusion coefficient from Stokes-Einstein relation [*You can see we assume our particles are spherical*].
+*Output* - `DMat` - A diffusion matrice relating every axis of every particle.
+*Inside* - Basically converting the math from the articles to code. You can check out equation (8) in [[3](#references)].
+
+---
+
+### Self defined functions
+All these functions exist to add extra options when running the simulation.
+
+#### feedbackCheckFunc
+This function checks conditions set by the user, and if it fits the set conditions it runs the `feedbackFunc`.
+
+*Input* - `simConfig`,`simStepdata`,`additionalData` - All our relevant variables.
+*Output* - `Boolean`
+
+Example -  
+```matlab
+function f = checkIfMoveWall(cfg, currStepData, addedData)
+    f = False;
+    rightmostPosition = max(currStepData.particlePositions(:,1))+cfg.R(1);
+    addedData.closestParticlePositions = rightmostPosition;
+    if currStepData.wallPositionsX(2) - rightmostPosition > 2*cfg.R(1)
+	    f = True;
+	end
+```
+Here our `feedbackCheckFunc` is `checkIfMoveWall`. The function checks if the distance between the rightmost particle and the wall on that side is larger than 3 particle radii. If it is we just go into running the `feedbackFunc`. We also save the position of that particle into `addedData.closestParticlePositions`.
+
+
+####  feedbackFunc
+This function runs after passing the conditions set in `feedbackCheckFunc`
+
+*Input* - `simConfig`,`simStepdata`,`additionalData` - All our relevant variables.
+*Output* - Your choice.
+
+Example -  
+```matlab
+function moveWall(cfg, currStepData, addedData)
+	currStepData.wallPositionsX(2) = addedData.closestParticlePositions;
+```
+After confirming that the distance of the particle to the wall was what we wanted we move the wall to 1 radius away from the center of the rightmost particle. We use our `addedData` to transfer the information from the `feedbackCheckFunc` into the `feedbackFunc`
+
+####  printFunc
+Every time we reach a sampling period we will have a chance to use our defined `printFunc` if we set `DisplayLive` to True in the configuration file.
+
+*Input* - `simConfig`,`simStepdata`,`additionalData` - All our relevant variables.
+*Output* - Your choice.
+
+```matlab
+function printTrapPosition(cfg, currStepData, addedData)
+    cla
+    hold all
+    xlim(cfg.xlimits)
+	ylim(cfg.ylimits)
+    for i = 1:size(cfg.initTrapPositions,1)
+		plot(currStepData.trapPositions(1,i),currStepData.trapPositions(2,i),'o'); 
+    end
+    pause(1); 
+```
+Using the limits we set in the configuration file we plot all of the traps current places.
 
 ## Basic examples
 
-Please read [Examples.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for some basic usage examples
+Please read [Examples.md](http) for some basic usage examples
 
 ## How to personalize
 
-Please read [Personalization.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details about how to add new forces or other functions.
+Please read [Personalization.md](http) for details about how to add new forces or other functions.
 
 ## References
 
