@@ -23,6 +23,7 @@ classdef simConfig < handle
         useHydro % Determines whether to apply hydrodynamic interactions between the particles
         
         useWalls % Boolean determining whether to apply walls to the simulation
+        wallRepulsionType % A string determining what kind of repulsion the walls apply (WCA/Harmonic)
         wallPositionsX % Spatial position of the wall on the x axis
         wallPositionsY % Spacial position of the wall on the y axis
         
