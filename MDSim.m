@@ -1,5 +1,5 @@
 function particlePositions = MDSim(cfg, forcesFunc, feedbackCheckFunc, feedbackFunc, printFunc, addedData)
-%% Basic definitions
+%% Basic definitions 
 close all
 kB = physconst('Boltzmann'); % Boltzmann constant [J/K]
 R = cfg.R(1); % Currently works only with one constant R
