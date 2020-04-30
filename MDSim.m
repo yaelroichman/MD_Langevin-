@@ -84,7 +84,7 @@ for i = 2:1:cfg.N
         save(strcat(cfg.saveFoldername, '/data.mat'), 'addedData');
         
         sampleInd = 1;
-        100*(i/cfg.N)
+        100*(i/cfg.N) 
     end
     %% Forces computation
     [fx, fy] = ...
