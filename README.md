@@ -7,7 +7,7 @@
 To calculate the trajectories of colloidal particles diffusing in a fluid. 
 
 The code can:
-1. Take into account hydrodynamic interactions between the particles under the stokes approximation with the Rotne–Prager correction. 
+1. Take into account hydrodynamic interactions between the particles under the stokes approximation with the Rotneâ€“Prager correction. 
 2. Take into account body forces and interaction forces (e.g. hard core repulsion) acting on the diffusing particles.
 
 
@@ -331,11 +331,11 @@ Using the limits we set in the configuration file we plot all of the traps curre
 
 ## Basic examples
 
-Please read [Examples.md](http) for some basic usage examples
+Please read [Examples.md](https://github.com/yaelroichman/MD_Langevin-/blob/master/Examples.md) for some basic usage examples
 
 ## How to personalize
 
-Please read [Personalization.md](http) for details about how to add new forces or other functions.
+Please read [Personalization.md](https://github.com/yaelroichman/MD_Langevin-/blob/master/Personalization.md) for details about how to add new forces or other functions.
 
 ## References
 
