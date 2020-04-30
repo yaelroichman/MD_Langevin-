@@ -26,7 +26,7 @@ end
 save(strcat(cfg.saveFoldername, '/cfg.mat'), 'cfg');
 %% Setting up the run variables
 currStepData = simStepData;
-currStepData.particlePositions = (squeeze(particlePositions(1,:,:)));
+currStepData.particlePositions = cfg.initPositions;
 if cfg.useWalls
     currStepData.wallPositionsX = cfg.wallPositionsX;
     currStepData.wallPositionsY = cfg.wallPositionsY;
