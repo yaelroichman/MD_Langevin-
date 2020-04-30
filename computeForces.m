@@ -2,13 +2,25 @@ function [fx, fy] = computeForces(cfg, currStepData, addedData)
 
 fx = 0;
 fy = 0;
+if cfg.useWalls
+    if strcmp(cfg.wallRepulsionType, 'WCA')
+        [fxWall, fyWall] = getWCAWallForces(currStepData.particlePositions,...
+                                            cfg.R(1),...
+                                            cfg.WCAEpsilon,...
+                                            currStepData.wallPositionsX,...
+                                            currStepData.wallPositionsY);
+    else
+        error(strcat('Unknown wall repulsion type ', cfg.wallRepulsionType));
+    end
+    fx = fx + fxWall;
+    fy = fy + fyWall;
+end
 
-if cfg.useWalls || cfg.useParticleRepulsion
-    [fxWCA, fyWCA] = getWCAForces(currStepData.particlePositions, cfg.R(1), cfg.WCAEpsilon,...
-        cfg.useParticleRepulsion, cfg.useWalls,...
-        currStepData.wallPositionsX, currStepData.wallPositionsY);
-    fx = fx + fxWCA;
-    fy = fy + fyWCA;
+if cfg.useParticleRepulsion
+    [fxParticles, fyParticles] = ...
+        getWCAParticleForces(currStepData.particlePositions, cfg.R(1), cfg.WCAEpsilon);
+    fx = fx + fxParticles;
+    fy = fy + fyParticles;
 end
 
 if cfg.useTraps
