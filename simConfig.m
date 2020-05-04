@@ -12,7 +12,10 @@ classdef simConfig < handle
         sampleRate % The rate (1/sec) at which the particle positions are recorded
         
         useWalls % Boolean determining whether to apply walls to the simulation
-        wallRepulsionType % A string determining what kind of repulsion the walls apply (WCA/Harmonic)
+        wallRepulsionType % A string determining what kind of repulsion the walls apply (WCA/Harmonic/Gaussian)
+        wallHarmonicK % The repulsion constant K for harmonic wall repulsion (Joule/meter)
+        wallGaussianA % The amplitude for Gaussian wall repulsion
+        wallGaussianS % The STD for gaussian wall repulsion
         wallPositionsX % Spatial position of the wall on the x axis
         wallPositionsY % Spacial position of the wall on the y axis
         
