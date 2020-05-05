@@ -6,19 +6,19 @@ function postSimAnalysis(cfg, addedData)
     particlePositions(:,:,2) = particlePositionsY;
     particlePositions(:,:,1) = particlePositionsX;
     %% Checking the percentages of movement options
-    addedData.closestParticlePositions = addedData.closestParticlePositions(~isnan(addedData.closestParticlePositions)); 
-    binWidth = 2e-7;
-    histEdges = 0:binWidth:max(addedData.closestParticleDistances);
-    figure(2);
-    histogram(addedData.closestParticleDistances, 'BinEdges', histEdges, 'Normalization', 'probability');
-    xlabel('Distance [m]');
-    ylabel('percentage of time in distance');
-    saveas(gcf, strcat(cfg.saveFoldername,'/distances.png'));
+%     addedData.closestParticlePositions = addedData.closestParticlePositions(~isnan(addedData.closestParticlePositions)); 
+%     binWidth = 2e-7;
+%     histEdges = 0:binWidth:max(addedData.closestParticleDistances);
+%     figure(2);
+%     histogram(addedData.closestParticleDistances, 'BinEdges', histEdges, 'Normalization', 'probability');
+%     xlabel('Distance [m]');
+%     ylabel('percentage of time in distance');
+%     saveas(gcf, strcat(cfg.saveFoldername,'/distances.png'));
     %% Checking the mean densities
     pixelsPerLength = 10/1e-6;
     densityHeatMap(particlePositions, cfg.R,...
-                   cfg.wallPositionsX, cfg.wallPositionsY,...
-                   pixelsPerLength, true, true, cfg.saveFoldername);
+                   cfg.xlimits, cfg.ylimits,...
+                   pixelsPerLength, true, false, cfg.saveFoldername);
     %% Showing the tracks
     addedData.wallMoveSteps = addedData.wallMoveSteps(~isnan(addedData.wallMoveSteps));
     addedData.newWallPositions = addedData.newWallPositions(~isnan(addedData.newWallPositions));
