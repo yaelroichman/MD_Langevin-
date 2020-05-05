@@ -18,7 +18,7 @@ function postSimAnalysis(cfg, addedData)
     pixelsPerLength = 10/1e-6;
     densityHeatMap(particlePositions, cfg.R,...
                    cfg.xlimits, cfg.ylimits,...
-                   pixelsPerLength, true, false, cfg.saveFoldername);
+                   pixelsPerLength, false, false, cfg.saveFoldername);
     %% Showing the tracks
     addedData.wallMoveSteps = addedData.wallMoveSteps(~isnan(addedData.wallMoveSteps));
     addedData.newWallPositions = addedData.newWallPositions(~isnan(addedData.newWallPositions));
@@ -43,23 +43,23 @@ function postSimAnalysis(cfg, addedData)
     title('tracks')
     saveas(gcf, strcat(cfg.saveFoldername,'/tracks.png'));
     %% Saving the diffusion as a movie
-    numOfFrames = size(particlePositions,1);
-    for i = 1:numOfFrames
-        figure(1)
-        title(i);
-        plot([cfg.wallPositionsX(1),cfg.wallPositionsX(1)],[cfg.wallPositionsY(1),cfg.wallPositionsY(2)],'-');
-        hold on
-        plot([addedData.newWallPositions(movedInd),addedData.newWallPositions(movedInd)],[cfg.wallPositionsY(1),cfg.wallPositionsY(2)],'-');
-        plot([cfg.wallPositionsX(1),addedData.newWallPositions(movedInd)],[cfg.wallPositionsY(1),cfg.wallPositionsY(1)],'-');
-        plot([cfg.wallPositionsX(1),addedData.newWallPositions(movedInd)],[cfg.wallPositionsY(2),cfg.wallPositionsY(2)],'-');
-        viscircles([particlePositions(i,:,1)',...
-                    particlePositions(i,:,2)'],...
-            ones(cfg.numOfParticles,1).*cfg.R(1));
-        hold off
-          F(i) = getframe(gcf);
-          drawnow
-        if movedInd < length(sampledWallMoves) && mod(i,sampledWallMoves(movedInd)) == 0
-            movedInd = movedInd + 1;
-        end
-    end
-    saveMovie(F, 1/cfg.sampleRate, strcat(cfg.saveFoldername, '/movie.avi'))
+%     numOfFrames = size(particlePositions,1);
+%     for i = 1:numOfFrames
+%         figure(1)
+%         title(i);
+%         plot([cfg.wallPositionsX(1),cfg.wallPositionsX(1)],[cfg.wallPositionsY(1),cfg.wallPositionsY(2)],'-');
+%         hold on
+%         plot([addedData.newWallPositions(movedInd),addedData.newWallPositions(movedInd)],[cfg.wallPositionsY(1),cfg.wallPositionsY(2)],'-');
+%         plot([cfg.wallPositionsX(1),addedData.newWallPositions(movedInd)],[cfg.wallPositionsY(1),cfg.wallPositionsY(1)],'-');
+%         plot([cfg.wallPositionsX(1),addedData.newWallPositions(movedInd)],[cfg.wallPositionsY(2),cfg.wallPositionsY(2)],'-');
+%         viscircles([particlePositions(i,:,1)',...
+%                     particlePositions(i,:,2)'],...
+%             ones(cfg.numOfParticles,1).*cfg.R(1));
+%         hold off
+%           F(i) = getframe(gcf);
+%           drawnow
+%         if movedInd < length(sampledWallMoves) && mod(i,sampledWallMoves(movedInd)) == 0
+%             movedInd = movedInd + 1;
+%         end
+%     end
+%     saveMovie(F, 1/cfg.sampleRate, strcat(cfg.saveFoldername, '/movie.avi'))

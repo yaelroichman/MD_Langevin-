@@ -22,7 +22,7 @@ function particlePositions = infoChamber(N,Dt,sampleRate,R,T,eta, lx, ly, numOfP
     cfg.useHydro = true;
     cfg.displayLive = displayLive;
     cfg.saveFoldername = saveFoldername;
-    cfg.savePeriod = cfg.N ./ 10; %save to disk
+    cfg.savePeriod = cfg.N ./ 50; %save to disk
     cfg.useTraps = false;
     cfg.initTrapPositions = [0,0];
 %     cfg.A = -10*physconst('boltzmann')*cfg.T;
@@ -40,7 +40,7 @@ function particlePositions = infoChamber(N,Dt,sampleRate,R,T,eta, lx, ly, numOfP
 %     wallData.closestParticlePositions = nan(cfg.N,1);
 %     wallData.closestParticleDistances = nan(cfg.N,1);
     %% Randomizing particle starting positions
-    rng('shuffle');
+%     rng('shuffle');
     [particlesX, particlesY] = randomizePositions(cfg.wallPositionsX, cfg.wallPositionsY, numOfParticles, R);
     initPositions = zeros(numOfParticles, 2);
     initPositions(:,1) = particlesX;
