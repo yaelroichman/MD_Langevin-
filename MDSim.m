@@ -8,7 +8,7 @@ D = kB*cfg.T/gamma; % diffusion coefficient
 d = 2; % The dimension of the problem. Currently ONLY WORKS FOR 2d!!
 samplePeriod = round(1 / (cfg.Dt*cfg.sampleRate)); % Defines the samplePeriod at which we will sample the simulation. 
 particlePositions = zeros(1+ceil(cfg.savePeriod/samplePeriod),cfg.numOfParticles, d); % Preallocate space
-particlePositions(1,:,:) = cfg.initPositions'; % sets the first step as defined in configuration
+particlePositions(1,:,:) = cfg.initPositions; % sets the first step as defined in configuration
 %% Checking if the save directory already exists
 if ~exist(cfg.saveFoldername, 'dir')
     mkdir(cfg.saveFoldername);
@@ -84,7 +84,7 @@ for i = 2:1:cfg.N
         save(strcat(cfg.saveFoldername, '/data.mat'), 'addedData');
         
         sampleInd = 1;
-        100*(i/cfg.N)
+        strcat(cfg.saveFoldername, ' - ', num2str(100*(i/cfg.N)), '%')
     end
     %% Forces computation
     [fx, fy] = ...

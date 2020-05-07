@@ -2,7 +2,6 @@ function [particlesX,particlesY] = randomizePositions(wallPositionsX, wallPositi
 % Randomizes the particle positions while ensuring no particles overlap
 particlesX = zeros(numOfParticles,1);
 particlesY = zeros(numOfParticles,1);
-rng(0,'twister');
 lx = abs(wallPositionsX(2) - wallPositionsX(1));
 ly = abs(wallPositionsY(2) - wallPositionsY(1));
 for currParticle = 1:numOfParticles
