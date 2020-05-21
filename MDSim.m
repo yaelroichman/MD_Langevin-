@@ -49,8 +49,6 @@ pause(0.01);
 if ~cfg.useHydro
     Dx = ones(cfg.numOfParticles,1).*D;
     Dy = Dx;
-    Ax = ones(cfg.numOfParticles,1).*sqrt(2*D);
-    Ay = Ax;
 end
 %% Running the simulation
 sampleInd = 2;
@@ -93,19 +91,24 @@ for i = 2:1:cfg.N
     if cfg.useHydro
         DMat = rotnePrager(currStepData.particlePositions,R, D);
         rootMat = chol(DMat,'lower');
+        % Note that chol may be used only since it is multiplied by a set
+        % of gaussian random variables. See https://stats.stackexchange.com/questions/83850/confused-about-cholesky-and-eigen-decomposition
         DVec = DMat*ones(cfg.numOfParticles*d,1);
-        AVec = rootMat*ones(cfg.numOfParticles*d,1);
+        AVec = rootMat*randn(cfg.numOfParticles*d,1);
         Dx = DVec(1:2:end);
         Dy = DVec(2:2:end);
         Ax = AVec(1:2:end);
         Ay = AVec(2:2:end);
+    else
+        Ax = randn(cfg.numOfParticles,1).*sqrt(2*D);
+        Ay = randn(cfg.numOfParticles,1).*sqrt(2*D);
     end
     %% Running the step
     currStepData.particlePositions(:,1) = currStepData.particlePositions(:,1) +...
-        Ax.*sqrt(cfg.Dt).*randn(cfg.numOfParticles,1) +...
+        Ax.*sqrt(cfg.Dt)+...
         (Dx./(kB.*cfg.T)).*fx.*cfg.Dt;
     currStepData.particlePositions(:,2) = currStepData.particlePositions(:,2) +...
-        Ay.*sqrt(cfg.Dt).*randn(cfg.numOfParticles,1) +...
+        Ay.*sqrt(cfg.Dt) +...
         (Dy./(kB.*cfg.T)).*fy.*cfg.Dt;
     %% Checking whether to apply a feedback to the system, and applying it if necessary
     if feedbackCheckFunc(cfg, currStepData, addedData)

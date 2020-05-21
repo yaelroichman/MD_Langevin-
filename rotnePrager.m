@@ -1,3 +1,4 @@
+% The computation follows the method presented in Nagar & Roichman (2018)
 function DMat = rotnePrager(particlesMat,R, D)
 d = 2; % The dimension of the problem. 
 % The code is NOT scalable to more or less dimensions, the variable d is
@@ -6,17 +7,10 @@ d = 2; % The dimension of the problem.
 % Converting the matrix of particle positions into a vector of the form
 % (x1, y1, x2, y2,..., xn, yn)
 numOfParticles = size(particlesMat,1);
-workingMat = particlesMat';
-particlesVec = zeros(d*numOfParticles,1);
-for i = 1:numOfParticles
-    particlesVec(2*i-1) = workingMat(1,i);
-    particlesVec(2*i) = workingMat(2,i);
-end
 
 % Constants for the matrix values
 c1 = 0.75*R;
 c2 = 0.5*R^3;
-
 % Setting a unit matrix to start from
 DMat = eye(d*numOfParticles);
 
@@ -33,7 +27,7 @@ for checkedParticle = 1:numOfParticles
         yDiff = particlesMat(checkedParticle,2) - particlesMat(pairedParticle,2);
         r = sqrt(xDiff^2+yDiff^2);
         
-        % For the x-x matrix position, adding c1(1 + x^2/r^2)
+        % For the x-x matrix position, setting (c1/r)(1 + x^2/r^2) + (c2/pow(r,3))(1 - 3*(x^2/r^2))
         DMat(xxPosition(1),xxPosition(2)) = (c1./r).*(1 + xDiff^2/r^2) +...
                                             (c2 ./ r^3).*(1-(xDiff^2/r^2));
         

@@ -1,4 +1,6 @@
 function particlePositions = infoChamber(N,Dt,sampleRate,R,T,eta, lx, ly, numOfParticles, wallShrink,saveFoldername, displayLive)
+    tic
+    startTime = toc;
     %% Setting the configuration for the simulation
     cfg = simConfig;
     cfg.N = N;
@@ -13,7 +15,7 @@ function particlePositions = infoChamber(N,Dt,sampleRate,R,T,eta, lx, ly, numOfP
     cfg.xlimits=cfg.wallPositionsX.*1.1;
     cfg.ylimits=cfg.wallPositionsY*1.1;
     cfg.useWalls = true;
-    cfg.wallRepulsionType = 'Harmonic';
+    cfg.wallRepulsionType = 'WCA';
     cfg.wallHarmonicK = 2e6*physconst('boltzmann')*cfg.T./1e-6;
 %     cfg.wallGaussianA = 1e3*physconst('boltzmann')*cfg.T;
 %     cfg.wallGaussianS = 10e-6;
@@ -52,5 +54,6 @@ function particlePositions = infoChamber(N,Dt,sampleRate,R,T,eta, lx, ly, numOfP
     %% Running the simulation
     particlePositions = MDSim(cfg, @computeForces, @(x,y,z) false, @moveWall, @printCurrStep, wallData);
     
+    totalTime = toc - startTime
     %% Running the post-simulation analysis
-    postSimAnalysis(cfg, wallData);
+%     postSimAnalysis(cfg, wallData);
