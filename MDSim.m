@@ -35,7 +35,7 @@ end
 if cfg.useTraps
     currStepData.A = cfg.A;
     currStepData.s = cfg.s;
-    trapPositions(1,:,:) = cfg.initTrapPositions';
+    trapPositions(1,:,:) = cfg.initTrapPositions;
     currStepData.trapPositions = (squeeze(trapPositions(1,:,:)));
 end
 
