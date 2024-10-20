@@ -29,11 +29,11 @@ for checkedParticle = 1:numOfParticles
         
         % For the x-x matrix position, setting (c1/r)(1 + x^2/r^2) + (c2/pow(r,3))(1 - 3*(x^2/r^2))
         DMat(xxPosition(1),xxPosition(2)) = (c1./r).*(1 + xDiff^2/r^2) +...
-                                            (c2 ./ r^3).*(1-(xDiff^2/r^2));
+                                            (c2 ./ r^3).*(1-(3*xDiff^2/r^2)); 
         
         % For the y-y matrix position, adding c1(1 + y^2/r^2)
         DMat(yyPosition(1), yyPosition(2)) = (c1./r).*(1 + yDiff^2/r^2) +...
-                                             (c2 ./ r^3).*(1-yDiff^2/r^2);
+                                             (c2 ./ r^3).*(1-(3*yDiff^2/r^2));
         
         % For the x-y position, adding c2(1-3xy/r^2)
         DMat(xyPosition(1), xyPosition(2)) = (c1./r).*((xDiff.*yDiff)./r^2) -...
