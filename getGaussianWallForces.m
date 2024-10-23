@@ -13,22 +13,18 @@ Rc = 2.5*R;
 
 for currParticle = 1:numOfParticles
     checkedParticlePosition = particlesMat(currParticle,:);
-    xBeyondLeftWall = wallPositionsX(1) - (checkedParticlePosition(1) - R);
-    xBeyondRightWall = checkedParticlePosition(1) + R - wallPositionsX(2);
-    yBeyondTopWall = checkedParticlePosition(2) + R - wallPositionsY(2);
-    yBeyondBottomWall = wallPositionsY(1) - (checkedParticlePosition(2) - R);
+    xRelToLeftWall = abs(wallPositionsX(1) - checkedParticlePosition(1));
+    xRelToRightWall = abs(checkedParticlePosition(1) - wallPositionsX(2));
+    yRelToTopWall = abs(checkedParticlePosition(2) - wallPositionsY(2));
+    yRelToBottomWall = abs(wallPositionsY(1) - checkedParticlePosition(2));
     
-    %% Checking if the particle's edge has passed a wall
-    if xBeyondRightWall > 0
-        fx(currParticle) = fx(currParticle) - getGaussianForce(A,s,xBeyondRightWall);
-    end
-    if xBeyondLeftWall > 0
-        fx(currParticle) = fx(currParticle) + getGaussianForce(A,s,xBeyondLeftWall);
-    end
-    if yBeyondTopWall > 0
-        fy(currParticle) = fy(currParticle) - getGaussianForce(A,s,yBeyondTopWall);
-    end
-    if yBeyondBottomWall > 0
-        fy(currParticle) = fy(currParticle) + getGaussianForce(A,s,yBeyondBottomWall);
-    end
+
+    fx(currParticle) = fx(currParticle) - getGaussianForce(A,s,xRelToRightWall);
+
+    fx(currParticle) = fx(currParticle) + getGaussianForce(A,s,xRelToLeftWall);
+
+    fy(currParticle) = fy(currParticle) - getGaussianForce(A,s,yRelToTopWall);
+
+    fy(currParticle) = fy(currParticle) + getGaussianForce(A,s,yRelToBottomWall);
+
 end
