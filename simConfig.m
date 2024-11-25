@@ -36,7 +36,10 @@ classdef simConfig < handle
         useTraps % Boolean determining whether to use optical traps
         initTrapPositions % The initial positions of the particles (2xnumOfTrap matrix)
         A % Trap depth can be a scalar (if all traps are the same) or a (2xnumOfTrap matrix) 
-        s % Trap size can be a scalar (if all traps are the same) or a (2xnumOfTrap matrix)         
-
+        s % Trap size can be a scalar (if all traps are the same) or a (2xnumOfTrap matrix)   
+        switchingPeriod % trap switching frequency in Hz
+        trapGridLen % length of cell in grid of traps
+        gridTotLen % total length of trap grid.
+        
     end
 end

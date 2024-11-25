@@ -12,5 +12,6 @@ function printCurrStep(cfg, currStepData, addedData)
     viscircles([currStepData.particlePositions(:,1),...
                 currStepData.particlePositions(:,2)],...
         ones(cfg.numOfParticles,1).*cfg.R(1));
-  %  hold off
+    radii=ones(length(currStepData.trapPositions),1).*1e-8;
+    viscircles(currStepData.trapPositions,radii,'Color','b')  %  hold off
     pause(0.001); 
